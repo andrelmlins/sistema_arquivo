@@ -86,9 +86,22 @@ public class Sistema {
 
 	public void novoArquivo() {
 		Arquivo arquivo = new Arquivo();
+		boolean nomeDiferente = false;
 
-		System.out.print("Informe o Nome: ");
-		arquivo.setNomeExt(this.scanner.nextLine());
+		while (!nomeDiferente) {
+			System.out.print("Informe o Nome: ");
+			arquivo.setNomeExt(this.scanner.nextLine());
+
+			nomeDiferente = true;
+			for (Arquivo arq : arquivos) {
+				if (arquivo.getNome().equals(arq.getNome()) && arq.getPasta().equals(this.pastaAtual)
+						&& arq.getExtensao().equals(arquivo.getExtensao())) {
+					printErro("Já existe um arquivo com este nome!");
+					nomeDiferente = false;
+					break;
+				}
+			}
+		}
 
 		System.out.print("Informe o Tamanho: ");
 		int aux = Integer.parseInt(this.scanner.nextLine());
@@ -109,6 +122,8 @@ public class Sistema {
 		this.arquivos.add(arquivo);
 
 		this.COUNT_ID++;
+
+		this.infoDisco();
 	}
 
 	public void novaPasta() {
@@ -257,8 +272,13 @@ public class Sistema {
 		System.out.println();
 		for (int i = 0; i < this.arquivos.size(); i++) {
 			if (this.arquivos.get(i).getPasta().equals(this.pastaAtual)) {
-				System.out.println(this.arquivos.get(i).getNome() + " --------------------------- "
-						+ this.arquivos.get(i).getTamanho() + "B");
+
+				if (this.arquivos.get(i).getExtensao().equals("pasta")) {
+					System.out.println(this.arquivos.get(i).getNome());
+				} else {
+					System.out.println(this.arquivos.get(i).getNome() + "." + this.arquivos.get(i).getExtensao()
+							+ " --------------------------- " + this.arquivos.get(i).getTamanho() + "B");
+				}
 			}
 		}
 		System.out.println();
@@ -266,15 +286,16 @@ public class Sistema {
 
 	public void removerArquivo() {
 		System.out.print("Informe o Nome: ");
-		String pasta = this.scanner.nextLine();
+		String nomeArquivo = this.scanner.nextLine();
 		boolean entrou = false;
 
 		Arquivo oldArquivo = null;
+		String nomeAtual;
 
 		for (int i = 0; i < this.arquivos.size(); i++) {
 			if (!this.arquivos.get(i).getExtensao().equals("pasta")) {
-				if (this.arquivos.get(i).getNome().equals(pasta)
-						&& this.arquivos.get(i).getPasta().equals(this.pastaAtual)) {
+				nomeAtual = this.arquivos.get(i).getNome() + "." + this.arquivos.get(i).getExtensao();
+				if (nomeAtual.equals(nomeArquivo) && this.arquivos.get(i).getPasta().equals(this.pastaAtual)) {
 					oldArquivo = this.arquivos.get(i);
 					this.arquivos.remove(i);
 					entrou = true;
@@ -286,8 +307,11 @@ public class Sistema {
 		if (!entrou) {
 			this.printErro("Arquivo não existe");
 		} else {
+			System.out.println("\nArquivo " + oldArquivo.getNome() + "." + oldArquivo.getExtensao() + " removido!\n");
 			this.removerDisco(oldArquivo);
 		}
+
+		this.infoDisco();
 	}
 
 	public void removerPasta() {
@@ -316,7 +340,10 @@ public class Sistema {
 				}
 			}
 			this.arquivos.removeAll(remover);
+			System.out.println("\nPasta " + arquivoPasta.getNome() + " removida!\n");
 			this.arquivos.remove(arquivoPasta);
+
+			this.infoDisco();
 		}
 	}
 
@@ -346,9 +373,13 @@ public class Sistema {
 				break;
 		}
 
-		for (int i = posicao; i < (arquivo.getTamanho() + posicao); i++) {
-			disco[i] = arquivo.getId();
-		}
+		if (countlivre >= arquivo.getTamanho()) {
+			for (int i = posicao; i < (arquivo.getTamanho() + posicao); i++) {
+				disco[i] = arquivo.getId();
+			}
+		} else
+			printErro("Disco sem espaço");
+		;
 
 		return posicao;
 	}
