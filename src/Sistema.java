@@ -123,7 +123,7 @@ public class Sistema {
 			arquivo.setNomeExt(this.scanner.nextLine());
 
 			nomeDiferente = true;
-			for (Arquivo arq :                                                                            arquivos) {
+			for (Arquivo arq : arquivos) {
 				if (arquivo.getNome().equals(arq.getNome()) && arq.getPasta().equals(this.pastaAtual)
 						&& arq.getExtensao().equals(arquivo.getExtensao())) {
 					printErro("Já existe um arquivo com este nome!");
@@ -483,13 +483,13 @@ public class Sistema {
 
 		// Substitui a memória
 		this.disco = memoria;
-		
-		//Corrige os índices
-		for(Arquivo arquivo:arquivos) {
-			if(arquivo.getExtensao() != "pasta") {
-				if(arquivo.getPrimeiraPosicao() != disco[arquivo.getPrimeiraPosicao()]) {
-					for(int i=0;i<disco.length;i++) {
-						if(disco[i] == arquivo.getId()) {
+
+		// Corrige os índices
+		for (Arquivo arquivo : arquivos) {
+			if (arquivo.getExtensao() != "pasta") {
+				if (arquivo.getPrimeiraPosicao() != disco[arquivo.getPrimeiraPosicao()]) {
+					for (int i = 0; i < disco.length; i++) {
+						if (disco[i] == arquivo.getId()) {
 							arquivo.setPrimeiraPosicao(i);
 							break;
 						}
