@@ -23,29 +23,53 @@ public class Sistema {
 		}
 	}
 
+	/**
+	 * Execução do sistema - Leitura do terminal
+	 */
 	public void run() {
-		while (true) {
+		comandos();
+		boolean sair = false;
+
+		while (!sair) {
 			this.printTerminal();
 			String entrada = this.scanner.nextLine();
 			String[] partesComando = entrada.split(" ");
 
 			try {
-				Comando comando = Comando.valueOf(partesComando[0]);
-				exec(comando);
+				if (partesComando[0].equals("sair")) {
+					printErro("Terminal finalizado!");
+					sair = true;
+				} else {
+					Comando comando = Comando.valueOf(partesComando[0]);
+					exec(comando);
+				}
 			} catch (IllegalArgumentException e) {
 				this.printErro("Comando não existe");
 			}
 		}
 	}
 
+	/**
+	 * Imprimir informação da localização no terminal
+	 */
 	public void printTerminal() {
 		System.out.print("root@localhost: " + this.pastaAtual + " $ ");
 	}
 
+	/**
+	 * Print da mensagem de erro
+	 * 
+	 * @param erro
+	 */
 	public void printErro(String erro) {
 		System.out.println("\n" + erro + "\n");
 	}
 
+	/**
+	 * Execução de um dos comandos escolhidos
+	 * 
+	 * @param comando
+	 */
 	public void exec(Comando comando) {
 		switch (comando) {
 		case novoArquivo:
@@ -84,16 +108,22 @@ public class Sistema {
 		}
 	}
 
+	/**
+	 * Criação de um arquivo novo
+	 */
 	public void novoArquivo() {
 		Arquivo arquivo = new Arquivo();
 		boolean nomeDiferente = false;
 
+		/**
+		 * Verificação do mesmo nome na pasta atual
+		 */
 		while (!nomeDiferente) {
 			System.out.print("Informe o Nome: ");
 			arquivo.setNomeExt(this.scanner.nextLine());
 
 			nomeDiferente = true;
-			for (Arquivo arq : arquivos) {
+			for (Arquivo arq :                                                                            arquivos) {
 				if (arquivo.getNome().equals(arq.getNome()) && arq.getPasta().equals(this.pastaAtual)
 						&& arq.getExtensao().equals(arquivo.getExtensao())) {
 					printErro("Já existe um arquivo com este nome!");
@@ -105,6 +135,10 @@ public class Sistema {
 
 		System.out.print("Informe o Tamanho: ");
 		int aux = Integer.parseInt(this.scanner.nextLine());
+
+		/**
+		 * Verificação se o tamanho incluído está dentro do range do disco
+		 */
 		while (aux > this.tamanhoParticao || aux < 0) {// || Integer.parseInt(this.scanner.nextLine()) <= 1){
 			this.printErro("Tamanho inválido! Não pode ser maior que o tamanho da partição ou menor que 1");
 			System.out.print("Informe o Tamanho: ");
@@ -118,35 +152,39 @@ public class Sistema {
 
 		Integer posicaoInicial = this.addDisco(arquivo);
 		arquivo.setPrimeiraPosicao(posicaoInicial);
-
 		this.arquivos.add(arquivo);
-
 		this.COUNT_ID++;
-
-		this.infoDisco();
 	}
 
+	/**
+	 * Criação de uma nova pasta
+	 */
 	public void novaPasta() {
 		Arquivo arquivo = new Arquivo();
 
 		System.out.print("Informe o Nome: ");
 		arquivo.setNome(this.scanner.nextLine());
+
 		arquivo.setTamanho(0);
-		arquivo.setExtensao("pasta");
+		arquivo.setExtensao("pasta"); // Identificação de que é uma pasta através da extensão
 		arquivo.setDataCriacao(new Date());
 		arquivo.setPasta(this.pastaAtual);
 		arquivo.setPrimeiraPosicao(0);
 		arquivo.setId(this.COUNT_ID);
 
 		this.arquivos.add(arquivo);
-
 		this.COUNT_ID++;
 	}
 
+	/**
+	 * Acessar uma pasta
+	 */
 	public void mudarPasta() {
 		System.out.print("Informe o Nome: ");
 		String pasta = this.scanner.nextLine();
 		boolean entrou = false;
+
+		// Verificação se o nome escolhido é de uma pasta existente
 		for (int i = 0; i < this.arquivos.size(); i++) {
 			if (this.arquivos.get(i).getExtensao().equals("pasta")) {
 				if (this.arquivos.get(i).getNome().equals(pasta)
@@ -158,19 +196,25 @@ public class Sistema {
 			}
 		}
 
+		// Caso não informa que a pasta não existe
 		if (!entrou) {
 			this.printErro("Pasta não existe");
 		}
 	}
 
+	/**
+	 * Retornar para a pasta acima
+	 */
 	public void voltarPasta() {
+		// Caso a pasta escolhida seja a raiz exibe mensagem de erro
 		if (this.pastaAtual.equals("/")) {
 			this.printErro("Não pode voltar da pasta raiz");
 			return;
 		}
+
+		// Percorre para atualizar a pasta atual
 		String[] aux = this.pastaAtual.split("/");
 		String pasta = aux[aux.length - 1];
-
 		String pastaVoltar = "/";
 
 		for (int i = 1; i < aux.length - 1; i++) {
@@ -188,6 +232,9 @@ public class Sistema {
 
 	}
 
+	/**
+	 * Print do disco
+	 */
 	public void infoDisco() {
 		System.out.println();
 		System.out.print("Disco: ");
@@ -198,6 +245,7 @@ public class Sistema {
 		System.out.println();
 	}
 
+	// Exibição da lista de comandos aceitos pelo sistema
 	public void comandos() {
 		System.out.println();
 		System.out.println("\t\t------------ Comandos ------------");
@@ -212,6 +260,7 @@ public class Sistema {
 		System.out.println("\t\tcomandos -> Lista Comandos");
 		System.out.println("\t\tmudarPasta -> Mudar Pasta");
 		System.out.println("\t\tverPasta -> Lista arquivos da Pasta");
+		System.out.println("\t\tsair -> Finaliza execução do sistema");
 		System.out.println();
 	}
 
@@ -310,8 +359,6 @@ public class Sistema {
 			System.out.println("\nArquivo " + oldArquivo.getNome() + "." + oldArquivo.getExtensao() + " removido!\n");
 			this.removerDisco(oldArquivo);
 		}
-
-		this.infoDisco();
 	}
 
 	public void removerPasta() {
@@ -343,7 +390,6 @@ public class Sistema {
 			System.out.println("\nPasta " + arquivoPasta.getNome() + " removida!\n");
 			this.arquivos.remove(arquivoPasta);
 
-			this.infoDisco();
 		}
 	}
 
@@ -379,7 +425,6 @@ public class Sistema {
 			}
 		} else
 			printErro("Disco sem espaço");
-		;
 
 		return posicao;
 	}
@@ -438,5 +483,19 @@ public class Sistema {
 
 		// Substitui a memória
 		this.disco = memoria;
+		
+		//Corrige os índices
+		for(Arquivo arquivo:arquivos) {
+			if(arquivo.getExtensao() != "pasta") {
+				if(arquivo.getPrimeiraPosicao() != disco[arquivo.getPrimeiraPosicao()]) {
+					for(int i=0;i<disco.length;i++) {
+						if(disco[i] == arquivo.getId()) {
+							arquivo.setPrimeiraPosicao(i);
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 }
