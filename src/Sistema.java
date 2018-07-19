@@ -91,7 +91,13 @@ public class Sistema {
 		arquivo.setNomeExt(this.scanner.nextLine());
 		
 		System.out.print("Informe o Tamanho: ");
-		arquivo.setTamanho(this.scanner.nextLine());
+		int aux = Integer.parseInt(this.scanner.nextLine());
+		while(aux > 20 || aux < 0){//|| Integer.parseInt(this.scanner.nextLine()) <= 1){
+			this.printErro("Tamanho inválido! Não pode ser maior que 20 ou menor que 1");
+			System.out.print("Informe o Tamanho: ");
+			aux = Integer.parseInt(this.scanner.nextLine());
+		}
+		arquivo.setTamanho(aux);		
 		
 		arquivo.setDataCriacao(new Date());
 		arquivo.setPasta(this.pastaAtual);
@@ -142,10 +148,14 @@ public class Sistema {
 	}
 	
 	public void voltarPasta() {
+		if(this.pastaAtual.equals("/")){
+			this.printErro("Não pode voltar da pasta raiz");
+			return;
+		}
 		String[] aux = this.pastaAtual.split("/");
 		String pasta = aux[aux.length-1];
 		
-		String pastaVoltar = "/";
+		String pastaVoltar = "/";		
 		
 		for(int i=1; i<aux.length-1;i++) {
 			pastaVoltar += aux[i]+"/";
@@ -158,6 +168,8 @@ public class Sistema {
 				}
 			}
 		}
+		
+		
 	}
 	
 	public void infoDisco() {
