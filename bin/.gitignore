@@ -1,6 +1,7 @@
 /Arquivo.class
 /Comando.class
+/FAT.class
+/HD.class
 /Main.class
 /Sistema.class
-/HD.class
-/FAT.class
+/Inode.class

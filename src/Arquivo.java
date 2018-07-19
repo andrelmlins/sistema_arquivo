@@ -1,23 +1,13 @@
 import java.util.Date;
 
 public class Arquivo {
+	private Integer id;
 	private String nome;
 	private String extensao;
 	private String pasta;
 	private Date dataCriacao;
 	private Integer tamanho;
-	
-	public Arquivo(String nome, String extensao, Date dataCriacao, Integer tamanho) {
-		super();
-		this.nome = nome;
-		this.extensao = extensao;
-		this.dataCriacao = dataCriacao;
-		this.tamanho = tamanho;
-	}
-	
-	public Arquivo() {
-		
-	}
+	private Integer primeiraPosicao;
 	
 	public String getNome() {
 		return nome;
@@ -74,9 +64,25 @@ public class Arquivo {
 		this.pasta = pasta;
 	}
 
+	public Integer getPrimeiraPosicao() {
+		return primeiraPosicao;
+	}
+
+	public void setPrimeiraPosicao(Integer primeiraPosicao) {
+		this.primeiraPosicao = primeiraPosicao;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	@Override
 	public String toString() {
-		return "\nArquivo \nNome=" + nome + "\nExtensão=" + extensao + "\nDiretório=" + pasta + "\nData de Criação=" + dataCriacao + "\nTamanho="
+		return "\nNome=" + nome + "\nExtensão=" + extensao + "\nDiretório=" + pasta + "\nData de Criação=" + dataCriacao + "\nTamanho="
 				+ tamanho+ "\n";
 	}
 }
